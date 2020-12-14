@@ -2,7 +2,7 @@
  * ?                              About
  * @Autor       : David Gomez Pinto
  * @Email       : dgomezp@ing.ucsc.cl  
- * @Repository  : --- 
+ * @Repository  : https://github.com/Sunbia/Proyecto
  * @Description : Definiciones de datos
  *========================================================================**/
 #ifndef DEFINICIONES_HPP
@@ -11,6 +11,7 @@
 // ─── Includes ──────────────────────────────────────────────────────────────────
 //
 #include <string>
+#include "List/LinkedList.hpp"
 using std::string;
 //
 // ─── Data Types ─────────────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ struct fecha
   bool isSafe();
 };
 
-struct node
+struct worker
 {
   rut RUT; //  key
   fecha nacimiento;
@@ -45,8 +46,6 @@ struct node
   string contrato;
   salario_t salario;
   carga_t cargas;
-  node *next;
-  node *prev;
 };
 
 //
@@ -55,22 +54,15 @@ struct node
 
 class Trabajadores
 {
+  friend class LinkedList<worker>;
+
 private:
-  node *first;
-  node *last;
+  ListADT<worker> *workers;
   size_t size;
 
 public:
   Trabajadores();
   ~Trabajadores();
-  bool isempty();
-  void addWorker(node *); // push()
-  void removeFirst();
-  void removeLast();
-  void removeWorker(node *);
-  void modifyWorker(rut, node *);
-  void genSalary(rut);
-  void displayWorkers();
 };
 //
 // ─── Departamentos ──────────────────────────────────────────────────────────────

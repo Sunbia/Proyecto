@@ -9,6 +9,7 @@
 // ─── Includes ──────────────────────────────────────────────────────────────────
 //
 #include "definiciones.hpp"
+
 //
 // ─── Rut ────────────────────────────────────────────────────────────────────────
 //
@@ -38,92 +39,9 @@ bool fecha::isSafe()
 //
 Trabajadores::Trabajadores()
 {
-  first = new node();
-  last = first;
-  size = 0;
+  workers = new LinkedList<worker>;
 }
 
-Trabajadores::~Trabajadores()
-{
-  node *aux = last;
-  while (aux != NULL)
-  {
-    last = last->prev;
-    delete aux;
-    aux = last;
-  }
-}
-
-bool Trabajadores::isempty()
-{
-  return (first == NULL && last == NULL);
-}
-
-void Trabajadores::addWorker(node *worker)
-{
-  if (this->isempty())
-  {
-    first = worker;
-    last = first;
-    size++;
-  }
-  else
-  {
-    worker->next = NULL;
-    worker->prev = last;
-    last->next = worker;
-    size++;
-  }
-}
-void Trabajadores::removeFirst()
-{
-  first = first->next;
-  delete first->prev;
-}
-
-void Trabajadores::removeLast()
-{
-  last = last->prev;
-  delete last->next;
-}
-
-void Trabajadores::removeWorker(node *worker)
-{
-  if (worker == first)
-  {
-    removeFirst();
-  }
-  else if (worker == last)
-  {
-    removeLast();
-  }
-  else
-  {
-    node *aux = first;
-    node *next;
-    node *prev;
-    while (aux != NULL)
-    {
-      if (aux == worker)
-      {
-        next = aux->next;
-        prev = aux->prev;
-        prev->next = next;
-        delete aux;
-      }
-      aux = aux->next;
-    }
-  }
-}
-
-void Trabajadores::modifyWorker(node *worker)
-{
-}
-
-void Trabajadores::genSalary(rut)
-{
-}
-
-void Trabajadores::displayWorkers()
-{
-}
+//
+// ─── Departamentos ──────────────────────────────────────────────────────────────
+//
