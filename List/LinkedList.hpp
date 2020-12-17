@@ -6,12 +6,6 @@ using std::cout;
 using std::endl;
 #include "ListADT.hpp"
 typedef unsigned int index_t;
-template <class T>
-struct node
-{
-    T data;
-    node<T> *next;
-};
 
 template <class T>
 class LinkedList : public ListADT<T>
@@ -30,6 +24,7 @@ public:
     T get_head();
     T get(index_t);
     bool contains(T);
+
     void addBeforeHead(T);
     void addAfterTail(T);
     void add(T, index_t);
@@ -37,6 +32,10 @@ public:
     void removeHead();
     void removeTail();
     void display();
+
+    node<T> *find(T);
+    node<T> *getTail();
+    node<T> *getHead();
 };
 
 template <typename T>
@@ -257,6 +256,33 @@ void LinkedList<T>::display()
             aux = aux->next;
         }
     }
+}
+//
+// ─── PROTECTED ──────────────────────────────────────────────────────────────────
+//
+
+template <typename T>
+node<T> *LinkedList<T>::find(T element)
+{
+    for (node<T> *i = _head; i != NULL; i = i->next)
+    {
+        if (i->data == element)
+        {
+            return i;
+        }
+    }
+}
+
+template <typename T>
+node<T> *getTail()
+{
+    return _head;
+}
+
+template <typename T>
+node<T> *getHead()
+{
+    return _tail;
 }
 
 #endif // !LINKEDLIST_HPP
