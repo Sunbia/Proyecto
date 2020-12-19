@@ -2,10 +2,16 @@
 #define LINKEDLIST_HPP
 #include <cstdlib>
 #include <iostream>
+#include "ListADT.hpp"
 using std::cout;
 using std::endl;
-#include "ListADT.hpp"
-typedef unsigned int index_t;
+
+template <class T>
+struct node
+{
+    T data;
+    node<T> *next;
+};
 
 template <class T>
 class LinkedList : public ListADT<T>
@@ -24,7 +30,6 @@ public:
     T get_head();
     T get(index_t);
     bool contains(T);
-
     void addBeforeHead(T);
     void addAfterTail(T);
     void add(T, index_t);
@@ -32,8 +37,6 @@ public:
     void removeHead();
     void removeTail();
     void display();
-
-    node<T> *find(T);
     node<T> *getTail();
     node<T> *getHead();
 };
@@ -60,7 +63,7 @@ LinkedList<T>::~LinkedList()
 template <typename T>
 bool LinkedList<T>::empty()
 {
-    return _size == 0;
+    return (_head == NULL & _tail == NULL) == 0;
 }
 
 template <typename T>
@@ -257,32 +260,17 @@ void LinkedList<T>::display()
         }
     }
 }
-//
-// ─── PROTECTED ──────────────────────────────────────────────────────────────────
-//
 
 template <typename T>
-node<T> *LinkedList<T>::find(T element)
-{
-    for (node<T> *i = _head; i != NULL; i = i->next)
-    {
-        if (i->data == element)
-        {
-            return i;
-        }
-    }
-}
-
-template <typename T>
-node<T> *getTail()
+node<T> *LinkedList<T>::getTail()
 {
     return _head;
 }
 
 template <typename T>
-node<T> *getHead()
+node<T> *LinkedList<T>::getHead()
 {
     return _tail;
 }
 
-#endif // !LINKEDLIST_HPP
+#endif

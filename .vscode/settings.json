@@ -5,6 +5,8 @@
     "type_traits": "cpp",
     "xstring": "cpp",
     "xutility": "cpp",
-    "exception": "cpp"
+    "exception": "cpp",
+    "string": "cpp",
+    "ostream": "cpp"
   }
 }
