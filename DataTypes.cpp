@@ -25,44 +25,56 @@ rut_t Workers::hash(rut_t key)
 {
   return key % maxLength;
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 Workers::Workers()
 {
-  trabajadores = new LinkedList<worker_t>[MAX];
+  for (size_t i = 0; i < MAX; i++)
+  {
+    trabajadores[i] = new LinkedList<worker_t>;
+  }
   maxLength = MAX;
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 Workers::~Workers()
 {
   for (size_t i = 0; i < maxLength; i++)
   {
-    while (trabajadores[i].getHead() != NULL)
+    while (trabajadores[i]->getHead() != NULL)
     {
-      trabajadores[i].removeTail();
+      trabajadores[i]->removeTail();
     }
   }
   delete[] trabajadores;
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 void Workers::insertWorker(worker_t worker_p)
 {
   rut_t index = hash(worker_p.RUT.digitos);
-  trabajadores[index].addAfterTail(worker_p);
+  trabajadores[index]->addAfterTail(worker_p);
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 void Workers::deleteWorker(rut_t rut_p)
 {
   rut_t index = hash(rut_p);
-  for (node<worker_t> *i = trabajadores[index].getHead(); i != NULL; i = i->next)
+  for (node<worker_t> *i = trabajadores[index]->getHead(); i != NULL; i = i->next)
   {
     if (i->data.RUT.digitos == rut_p)
     {
-      trabajadores[index].remove(i->data);
+      trabajadores[index]->remove(i->data);
       break;
     }
   }
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 void Workers::modifyWorker(rut_t rut_p, worker_t worker_p)
 {
   rut_t index = hash(rut_p);
-  for (node<worker_t> *i = trabajadores[index].getHead(); i != NULL; i = i->next)
+  for (node<worker_t> *i = trabajadores[index]->getHead(); i != NULL; i = i->next)
   {
     if (i->data.RUT.digitos == rut_p)
     {
@@ -71,19 +83,21 @@ void Workers::modifyWorker(rut_t rut_p, worker_t worker_p)
     }
   }
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::displayTable()
 {
 
   for (size_t i = 0; i < maxLength; i++)
   {
-    node<worker_t> *aux = trabajadores[i].getHead();
+    node<worker_t> *aux = trabajadores[i]->getHead();
     while (aux != NULL)
     {
       aux->data.see();
     }
   }
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::genLiq(rut_t)
 {
@@ -103,24 +117,39 @@ node<department_t> *Department::find(id_dpto idpto)
     }
   }
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
-Department::Department(size_t)
+Department::Department()
 {
   primero = NULL;
+  primero->data.Trabajadores = new Workers;
   ultimo = primero;
   TotalWorkers = 0;
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 Department::~Department()
 {
+  for (node<department_t> *i = primero; i != ultimo; i = i->next)
+  {
+    primero = primero->next;
+    delete i;
+  }
+  delete ultimo;
 }
-void Department::pushDpto(department_t dpto)
+// ────────────────────────────────────────────────────────────────────────────────
+
+void Department::pushDpto(id_dpto id, string name)
 {
   node<department_t> *aux;
-  aux = NULL;
-  aux->data = dpto;
+  aux->data.numWorkers = 0;
+  aux->data.numero = id;
+  aux->data.nombre = name;
+  aux->data.Trabajadores = new Workers();
   ultimo->next = aux;
   totalDpto++;
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 void Department::deleteDpto(id_dpto idpto)
 {
@@ -131,16 +160,20 @@ void Department::deleteDpto(id_dpto idpto)
     {
       i->next = requerido->next;
       delete requerido;
+      totalDpto--;
       break;
     }
   }
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 size_t Department::getNumWorkers(id_dpto idpto)
 {
   node<department_t> *aux = find(idpto);
   return aux->data.numWorkers;
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
 size_t Department::getTotalWokers()
 {
   size_t sum = 0;
@@ -150,9 +183,24 @@ size_t Department::getTotalWokers()
   }
   return sum;
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
 void Department::DisplayWorkers(id_dpto idpto)
 {
   node<department_t> *aux = find(idpto);
-  aux->data.Trabajadores.displayTable();
+  aux->data.Trabajadores->displayTable();
+}
+// ────────────────────────────────────────────────────────────────────────────────
+
+void Department::DisplayDptos()
+{
+  size_t j = 0;
+  for (node<department_t> *i = primero; i != NULL; i = i->next)
+  {
+    cout << endl
+         << "ID:" << i->data.numero << endl;
+    cout << "Nombre:" << i->data.nombre << endl;
+    cout << "Total de trabajadores:" << i->data.numWorkers << endl
+         << endl;
+  }
 }

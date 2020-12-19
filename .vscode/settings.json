@@ -7,6 +7,7 @@
     "xutility": "cpp",
     "exception": "cpp",
     "string": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "iostream": "cpp"
   }
 }
