@@ -52,6 +52,7 @@ int main(int argc, char const *argv[])
       switch (validateSwitch2)
       {
       case 1:
+        
         cout << "En que departamento desea ingresar ?(ID): ";
         cin >> key_dpto;
         cout << "ingrese identificador de departamento:";
@@ -82,15 +83,14 @@ int main(int argc, char const *argv[])
         cin >> trabajador.salario;
         cout << "Numero de cargas:" << endl;
         cin >> trabajador.cargas;
-        node<department_t> *aux = chozadeconcreto->find(key_dpto);
-        aux->data.Trabajadores->insertWorker(trabajador);
-        aux->data.numWorkers++;
-        continue;
+        chozadeconcreto->find(key_dpto)->data.Trabajadores->insertWorker(trabajador);
+        chozadeconcreto->find(key_dpto)->data.numWorkers++;
+        break;
       case 2:
         chozadeconcreto->find(key_dpto)->data.Trabajadores->deleteWorker(key_worker);
-        aux->data.numWorkers--;
+        chozadeconcreto->find(key_dpto)->data.numWorkers--;
         cout << "Despedido con exito!" << endl;
-        continue;
+        break;
       case 3:
         cout << "ingrese identificador de departamento:";
         cin >> key_dpto;
@@ -121,15 +121,15 @@ int main(int argc, char const *argv[])
         cout << "Numero de cargas:" << endl;
         cin >> trabajador.cargas;
         chozadeconcreto->find(key_dpto)->data.Trabajadores->modifyWorker(key_worker, trabajador);
-        continue;
+        break;
       case 4:
         chozadeconcreto->DisplayWorkers(key_dpto);
-        continue;
+        break;
       case 5:
         chozadeconcreto->find(key_dpto)->data.Trabajadores->genLiq(key_worker);
-        continue;
+        break;
       default:
-        continue;
+        break;
       }
       break;
     case 4:

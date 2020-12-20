@@ -7,13 +7,6 @@ using std::cout;
 using std::endl;
 
 template <class T>
-struct node
-{
-    T data;
-    node<T> *next;
-};
-
-template <class T>
 class LinkedList : public ListADT<T>
 {
 private:
@@ -36,7 +29,6 @@ public:
     void remove(T);
     void removeHead();
     void removeTail();
-    void display();
     node<T> *getTail();
     node<T> *getHead();
 };
@@ -193,7 +185,7 @@ template <typename T>
 void LinkedList<T>::removeHead()
 {
     node<T> *aux = this->_head;
-    _head = _head->next;
+    this->_head = this->_head->next; 
     delete aux;
     _size--;
 }
@@ -202,7 +194,7 @@ template <typename T>
 void LinkedList<T>::removeTail()
 {
     node<T> *aux = _head;
-    for (size_t i = 0; i < _size; i++)
+    for (int i = 0; i < _size; i++)
     {
         if (i == _size - 2) // (size -1) = ultimo elemento (tail)
         {
@@ -239,25 +231,6 @@ void LinkedList<T>::remove(T element)
         }
         anterior->next = actual->next;
         delete actual;
-    }
-}
-
-template <typename T>
-void LinkedList<T>::display()
-{
-    node<T> *aux = _head;
-    while (aux != NULL)
-    {
-        if (aux == _tail)
-        {
-            cout << aux->data;
-            break;
-        }
-        else
-        {
-            cout << aux->data << " --> ";
-            aux = aux->next;
-        }
     }
 }
 

@@ -8,6 +8,9 @@
     "exception": "cpp",
     "string": "cpp",
     "ostream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "iosfwd": "cpp",
+    "system_error": "cpp",
+    "xlocale": "cpp"
   }
 }

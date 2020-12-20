@@ -5,7 +5,7 @@
 using std::string;
 
 #define MAX 10 // tamaño de la tabla
-typedef unsigned int size_t;
+typedef unsigned int sizeT;
 typedef unsigned int id_dpto; // key
 typedef unsigned int salario_t;
 typedef unsigned int carga_t;
@@ -37,6 +37,8 @@ struct worker_t
   salario_t salario;
   carga_t cargas;
   void see();
+  bool operator==(const worker_t &);
+  bool operator!=(const worker_t &);
 };
 
 class Workers
@@ -44,7 +46,7 @@ class Workers
 private:
   ListADT<worker_t> *trabajadores[MAX];
 
-  size_t maxLength;
+  sizeT maxLength;
   rut_t hash(rut_t);
 
 public:
@@ -61,25 +63,27 @@ struct department_t
 {
   id_dpto numero;
   string nombre;
-  size_t numWorkers;
+  sizeT numWorkers;
   Workers *Trabajadores;
+  department_t();
+  ~department_t();
 };
 class Department
 {
 private:
   node<department_t> *primero;
   node<department_t> *ultimo;
-  size_t totalDpto;
+  sizeT totalDpto;
 
 public:
   Department();
   ~Department();
   node<department_t> *find(id_dpto);
-  size_t TotalWorkers;
+  sizeT TotalWorkers;
   void pushDpto(id_dpto, string);
   void deleteDpto(id_dpto);
-  size_t getNumWorkers(id_dpto);
-  size_t getTotalWokers();
+  sizeT getNumWorkers(id_dpto);
+  sizeT getTotalWokers();
   void DisplayWorkers(id_dpto);
   void DisplayDptos();
 };

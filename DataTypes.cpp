@@ -16,7 +16,49 @@ void worker_t::see()
   cout << salario << endl;
   cout << cargas << endl;
 }
+bool worker_t::operator==(const worker_t &worker)
+{
+  return (RUT.digitos == worker.RUT.digitos 
+  && RUT.verificador == worker.RUT.verificador 
+  && nacimiento.day == worker.nacimiento.day 
+  && nacimiento.month == worker.nacimiento.month 
+  && nacimiento.year == worker.nacimiento.year 
+  && nombre == worker.nombre 
+  && apellidoP == worker.apellidoP 
+  && apellidoM == worker.apellidoM 
+  && contrato == worker.contrato 
+  && salario == worker.salario 
+  && cargas == worker.cargas);
+}
+bool worker_t::operator!=(const worker_t &worker)
+{
+  return (RUT.digitos != worker.RUT.digitos 
+  && RUT.verificador != worker.RUT.verificador 
+  && nacimiento.day != worker.nacimiento.day 
+  && nacimiento.month != worker.nacimiento.month 
+  && nacimiento.year != worker.nacimiento.year 
+  && nombre != worker.nombre 
+  && apellidoP != worker.apellidoP 
+  && apellidoM != worker.apellidoM 
+  && contrato != worker.contrato 
+  && salario != worker.salario 
+  && cargas != worker.cargas);
+}
 
+//
+// ─── DEPARTMENT_TYPE ──────────────────────────────────────────────────────────────────
+//
+department_t::department_t()
+{
+  numWorkers = 0;
+  Trabajadores = new Workers();
+
+}
+department_t::~department_t()
+{
+  Trabajadores->~Workers();
+}
+  
 //
 // ─── TRABAJADORES ───────────────────────────────────────────────────────────────
 //
@@ -29,7 +71,7 @@ rut_t Workers::hash(rut_t key)
 
 Workers::Workers()
 {
-  for (size_t i = 0; i < MAX; i++)
+  for (int i = 0; i < MAX; i++)
   {
     trabajadores[i] = new LinkedList<worker_t>;
   }
@@ -39,14 +81,14 @@ Workers::Workers()
 
 Workers::~Workers()
 {
-  for (size_t i = 0; i < maxLength; i++)
+  for (sizeT i = 0; i < maxLength; i++)
   {
     while (trabajadores[i]->getHead() != NULL)
     {
       trabajadores[i]->removeTail();
     }
+    trabajadores[i]->removeHead();
   }
-  delete[] trabajadores;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -88,7 +130,7 @@ void Workers::modifyWorker(rut_t rut_p, worker_t worker_p)
 void Workers::displayTable()
 {
 
-  for (size_t i = 0; i < maxLength; i++)
+  for (sizeT i = 0; i < maxLength; i++)
   {
     node<worker_t> *aux = trabajadores[i]->getHead();
     while (aux != NULL)
@@ -109,20 +151,22 @@ void Workers::genLiq(rut_t)
 //
 node<department_t> *Department::find(id_dpto idpto)
 {
+  node<department_t> *finded;
   for (node<department_t> *i = primero; i != NULL; i = i->next)
   {
     if (i->data.numero == idpto)
     {
-      return i;
+      finded = i;
+      break;
     }
   }
+  return finded;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 Department::Department()
 {
-  primero = NULL;
-  primero->data.Trabajadores = new Workers;
+  primero = new node<department_t>;
   ultimo = primero;
   TotalWorkers = 0;
 }
@@ -167,19 +211,22 @@ void Department::deleteDpto(id_dpto idpto)
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
-size_t Department::getNumWorkers(id_dpto idpto)
+sizeT Department::getNumWorkers(id_dpto idpto)
 {
   node<department_t> *aux = find(idpto);
   return aux->data.numWorkers;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
-size_t Department::getTotalWokers()
+sizeT Department::getTotalWokers()
 {
-  size_t sum = 0;
-  for (node<department_t> *i = primero; i != NULL; i = i->next)
+  sizeT sum = 0;
+  node<department_t> *i = primero;
+  department_t cero;
+  while (i != NULL && i->data.numWorkers != 0)
   {
     sum += i->data.numWorkers;
+    i = i->next;
   }
   return sum;
 }
@@ -194,7 +241,7 @@ void Department::DisplayWorkers(id_dpto idpto)
 
 void Department::DisplayDptos()
 {
-  size_t j = 0;
+  sizeT j = 0;
   for (node<department_t> *i = primero; i != NULL; i = i->next)
   {
     cout << endl

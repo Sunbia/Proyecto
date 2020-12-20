@@ -1,7 +1,12 @@
 #ifndef LISTADT_HPP
 #define LISTADT_HPP
 typedef unsigned int index_t;
-
+template <class T>
+struct node
+{
+    T data;
+    node<T> *next;
+};
 template <class T>
 class ListADT
 {
@@ -18,7 +23,6 @@ public:
     virtual void remove(T) = 0;
     virtual void removeHead() = 0;
     virtual void removeTail() = 0;
-    virtual void display() = 0;
     virtual node<T> *getTail() = 0;
     virtual node<T> *getHead() = 0;
 };
