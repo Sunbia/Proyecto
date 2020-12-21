@@ -2,6 +2,7 @@
 #define DATATYPES_HPP
 #include "List/LinkedList.hpp"
 #include <string>
+#include <iostream>
 using std::string;
 
 #define MAX 10 // tamaño de la tabla
@@ -36,7 +37,8 @@ struct worker_t
   string contrato;
   salario_t salario;
   carga_t cargas;
-  void see();
+  friend std::ostream& operator << (std::ostream &, const worker_t &);
+  friend std::istream& operator >> (std::istream &, worker_t &);
   bool operator==(const worker_t &);
   bool operator!=(const worker_t &);
 };

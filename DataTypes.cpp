@@ -7,14 +7,43 @@ using std::endl;
 // ─── WORKER_T ─────────────────────────────────────────────────────────────────────
 //
 
-void worker_t::see()
+std::ostream& operator << (std::ostream& output, const worker_t& worker)
 {
-  cout << RUT.digitos << '-' << RUT.verificador << endl;
-  cout << nacimiento.day << '/' << nacimiento.month << '/' << nacimiento.year << endl;
-  cout << nombre << ' ' << apellidoP << ' ' << apellidoM << endl;
-  cout << contrato << endl;
-  cout << salario << endl;
-  cout << cargas << endl;
+  output << worker.RUT.digitos << '-' << worker.RUT.verificador << endl;
+  output << worker.nacimiento.day << '/' << worker.nacimiento.month << '/' << worker.nacimiento.year << endl;
+  output << worker.nombre << ' ' << worker.apellidoP << ' ' << worker.apellidoM << endl;
+  output << worker.contrato << endl;
+  output << worker.salario << endl;
+  output << worker.cargas << endl;
+  return output;
+}
+std::istream& operator >> (std::istream &in, worker_t &trabajador)
+{
+
+  cout << "Rut:" << endl;
+  cout << "Numero inicial (12.345.678 sin puntos):";
+  in >> trabajador.RUT.digitos;
+  cout << "Digito verificador:";
+  in >> trabajador.RUT.verificador;
+  cout << "Fecha de nacimiento:" << endl;
+  cout << "Dia:";
+  in >> trabajador.nacimiento.day;
+  cout << "Mes";
+  in >> trabajador.nacimiento.month;
+  cout << "Año:";
+  in >> trabajador.nacimiento.year;
+  cout << "Nombre:" << endl;
+  in >> trabajador.nombre;
+  cout << "Apellido Paterno:" << endl;
+  in >> trabajador.apellidoP;
+  cout << "Apellido Materno:" << endl;
+  in >> trabajador.apellidoM;
+  cout << "Tipo contrato:" << endl;
+  in >> trabajador.contrato;
+  cout << "Salario:" << endl;
+  in >> trabajador.salario;
+  cout << "Numero de cargas:" << endl;
+  in >> trabajador.cargas;
 }
 bool worker_t::operator==(const worker_t &worker)
 {
@@ -135,15 +164,31 @@ void Workers::displayTable()
     node<worker_t> *aux = trabajadores[i]->getHead();
     while (aux != NULL)
     {
-      aux->data.see();
+      aux->data;
+      aux = aux->next;
     }
   }
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
-void Workers::genLiq(rut_t)
+void Workers::genLiq(rut_t id)
 {
-  // pendiente
+  int i = hash(id);
+  node<worker_t> *aux = trabajadores[i]->getHead();
+  while (aux != NULL)
+  {
+    if (aux->data.RUT.digitos == id)
+    {
+      aux->data.cargas; // variables
+      aux->data.contrato; // variables
+      aux->data.salario;// variables
+    }
+    else
+    {
+      aux = aux->next;
+    }
+    
+  }
 }
 
 //

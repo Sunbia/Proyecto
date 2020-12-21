@@ -52,37 +52,13 @@ int main(int argc, char const *argv[])
       switch (validateSwitch2)
       {
       case 1:
-        
         cout << "En que departamento desea ingresar ?(ID): ";
         cin >> key_dpto;
         cout << "ingrese identificador de departamento:";
         cin >> key_dpto;
-        cout << "ingrese rut del trabajador sin puntos ni guion: ";
+        cout << "ingrese rut del trabajador sin puntos guion: ";
         cin >> key_worker;
-        cout << "Rut:" << endl;
-        cout << "Numero inicial (12.345.678 sin puntos):";
-        cin >> trabajador.RUT.digitos;
-        cout << "Digito verificador:";
-        cin >> trabajador.RUT.verificador;
-        cout << "Fecha de nacimiento:" << endl;
-        cout << "Dia:";
-        cin >> trabajador.nacimiento.day;
-        cout << "Mes";
-        cin >> trabajador.nacimiento.month;
-        cout << "Año:";
-        cin >> trabajador.nacimiento.year;
-        cout << "Nombre:" << endl;
-        cin >> trabajador.nombre;
-        cout << "Apellido Paterno:" << endl;
-        cin >> trabajador.apellidoP;
-        cout << "Apellido Materno:" << endl;
-        cin >> trabajador.apellidoM;
-        cout << "Tipo contrato:" << endl;
-        cin >> trabajador.contrato;
-        cout << "Salario:" << endl;
-        cin >> trabajador.salario;
-        cout << "Numero de cargas:" << endl;
-        cin >> trabajador.cargas;
+        cin >> trabajador;
         chozadeconcreto->find(key_dpto)->data.Trabajadores->insertWorker(trabajador);
         chozadeconcreto->find(key_dpto)->data.numWorkers++;
         break;
