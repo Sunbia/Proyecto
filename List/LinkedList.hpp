@@ -3,8 +3,6 @@
 #include <cstdlib>
 #include <iostream>
 #include "ListADT.hpp"
-using std::cout;
-using std::endl;
 
 template <class T>
 class LinkedList : public ListADT<T>
@@ -18,9 +16,9 @@ public:
     LinkedList();
     ~LinkedList();
     bool empty();
-    unsigned int size();
-    T get_tail();
-    T get_head();
+    unsigned int getsize();
+    T getTailData();
+    T getHeadData();
     T get(index_t);
     bool contains(T);
     void addBeforeHead(T);
@@ -29,9 +27,60 @@ public:
     void remove(T);
     void removeHead();
     void removeTail();
+
+    node<T> *find(index_t);
+    node<T> *find(T);
     node<T> *getTail();
     node<T> *getHead();
 };
+//
+// ─── PROTECTED ──────────────────────────────────────────────────────────────────
+//
+template <typename T>
+node<T> *LinkedList<T>::find(index_t index)
+{
+    node<T> *aux = _head;
+    index_t i = 0;
+    while (aux != NULL)
+    {
+        if (i == index)
+        {
+            return aux;
+        }
+        aux = aux->next;
+        i++;
+    }
+}
+
+template <typename T>
+node<T> *LinkedList<T>::find(T element)
+{
+    node<T> *aux = _head;
+    while (aux != NULL)
+    {
+        if (aux->data == element)
+        {
+            return aux;
+        }
+        aux = aux->next;
+    }
+}
+
+template <typename T>
+node<T> *LinkedList<T>::getTail()
+{
+    return _head;
+}
+
+template <typename T>
+node<T> *LinkedList<T>::getHead()
+{
+    return _tail;
+}
+
+//
+// ─── PUBLIC ─────────────────────────────────────────────────────────────────────
+//
 
 template <typename T>
 LinkedList<T>::LinkedList()
@@ -55,23 +104,23 @@ LinkedList<T>::~LinkedList()
 template <typename T>
 bool LinkedList<T>::empty()
 {
-    return (_head == NULL & _tail == NULL) == 0;
+    return (_head == NULL && _tail == NULL);
 }
 
 template <typename T>
-unsigned int LinkedList<T>::size()
+unsigned int LinkedList<T>::getsize()
 {
     return _size;
 }
 
 template <typename T>
-T LinkedList<T>::get_tail()
+T LinkedList<T>::getTailData()
 {
     return _tail->data;
 }
 
 template <typename T>
-T LinkedList<T>::get_head()
+T LinkedList<T>::getHeadData()
 {
     return _head->data;
 }
@@ -80,8 +129,8 @@ template <typename T>
 T LinkedList<T>::get(index_t index)
 {
     node<T> *aux = _head;
-    int i = 0;
-    while (aux != NULL)
+    index_t i = 0;
+    while (aux != NULL && i < _size)
     {
         if (i == index)
         {
@@ -90,8 +139,6 @@ T LinkedList<T>::get(index_t index)
         aux = aux->next;
         i++;
     }
-
-    return aux->data;
 }
 
 template <typename T>
@@ -110,23 +157,27 @@ bool LinkedList<T>::contains(T element)
         }
         aux = aux->next;
     }
-    return false;
 }
 
 template <typename T>
 void LinkedList<T>::addBeforeHead(T element)
 {
     node<T> *aux = new node<T>;
-    aux->next = _head;
     aux->data = element;
+
     if (this->empty())
     {
+        aux->next = NULL;
+        aux->prev = NULL;
         _tail = aux;
         _head = aux;
         _size++;
     }
     else
     {
+        aux->next = _head;
+        aux->prev = NULL;
+        _head->prev = aux;
         _head = aux;
         _size++;
     }
@@ -136,16 +187,19 @@ template <typename T>
 void LinkedList<T>::addAfterTail(T element)
 {
     node<T> *aux = new node<T>;
-    aux->next = NULL;
     aux->data = element;
     if (this->empty())
     {
+        aux->next = NULL;
+        aux->prev = NULL;
         _tail = aux;
         _head = aux;
         _size++;
     }
     else
     {
+        aux->prev = _tail;
+        aux->next = NULL;
         _tail->next = aux;
         _tail = aux;
         _size++;
@@ -155,54 +209,44 @@ void LinkedList<T>::addAfterTail(T element)
 template <typename T>
 void LinkedList<T>::add(T element, index_t index)
 {
-    node<T> *aux2 = new node<T>;
-    aux2->data = element;
     if (this->empty())
     {
-        _tail = aux2;
-        _head = aux2;
-        _size++;
+        addBeforeHead(element);
     }
     else
     {
-        node<T> *aux = _head;
-        int i = 0;
-        while (aux != NULL)
-        {
-            if (i == index - 1)
-            {
-                aux2->next = aux->next;
-                aux->next = aux2;
-                _size++;
-            }
-            aux = aux->next;
-            i++;
-        }
+        node<T> *target = find(index);
+        node<T> *newNode = new node<T>();
+        newNode->next = target;
+        newNode->prev = target->prev;
+        target->prev->next = newNode;
+        target->prev = newNode;
+        _size++;
     }
 }
 
 template <typename T>
 void LinkedList<T>::removeHead()
 {
-    node<T> *aux = this->_head;
-    this->_head = this->_head->next; 
-    delete aux;
-    _size--;
+    if (empty() == false)
+    {
+        node<T> *aux = this->_head;
+        this->_head = this->_head->next;
+        _head->prev = NULL;
+        delete aux;
+        _size--;
+    }
 }
 
 template <typename T>
 void LinkedList<T>::removeTail()
 {
-    node<T> *aux = _head;
-    for (int i = 0; i < _size; i++)
+    if (empty() == false)
     {
-        if (i == _size - 2) // (size -1) = ultimo elemento (tail)
-        {
-            _tail = aux;
-            aux = aux->next;
-            delete aux;
-            break;
-        }
+        node<T> *aux = _tail;
+        _tail = _tail->prev;
+        _tail->next = NULL;
+        delete aux;
     }
 }
 template <typename T>
@@ -222,28 +266,12 @@ void LinkedList<T>::remove(T element)
     }
     else
     {
-        node<T> *actual = _head;
-        node<T> *anterior;
-        while (actual != NULL && actual->data != element)
-        {
-            anterior = actual;
-            actual = actual->next;
-        }
-        anterior->next = actual->next;
-        delete actual;
+        node<T> *target = find(element);
+        target->prev->next = target->next;
+        target->next->prev = target->prev;
+        delete target;
+        _size--;
     }
-}
-
-template <typename T>
-node<T> *LinkedList<T>::getTail()
-{
-    return _head;
-}
-
-template <typename T>
-node<T> *LinkedList<T>::getHead()
-{
-    return _tail;
 }
 
 #endif

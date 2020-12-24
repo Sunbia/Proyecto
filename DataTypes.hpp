@@ -37,24 +37,27 @@ struct worker_t
   string contrato;
   salario_t salario;
   carga_t cargas;
-  friend std::ostream& operator << (std::ostream &, const worker_t &);
-  friend std::istream& operator >> (std::istream &, worker_t &);
+  friend std::ostream &operator<<(std::ostream &, const worker_t &);
+  friend std::istream &operator>>(std::istream &, worker_t &);
   bool operator==(const worker_t &);
   bool operator!=(const worker_t &);
 };
 
 class Workers
 {
+
 private:
   ListADT<worker_t> *trabajadores[MAX];
-
+  sizeT numWorkers;
   sizeT maxLength;
   rut_t hash(rut_t);
 
 public:
   Workers();
   ~Workers();
+  sizeT getNumWorkers();
   void insertWorker(worker_t);
+  worker_t getWorker(rut_t);
   void deleteWorker(rut_t);
   void modifyWorker(rut_t, worker_t);
   void displayTable();
@@ -65,29 +68,29 @@ struct department_t
 {
   id_dpto numero;
   string nombre;
-  sizeT numWorkers;
   Workers *Trabajadores;
-  department_t();
-  ~department_t();
+  friend std::ostream &operator<<(std::ostream &, const department_t &);
+  bool operator==(const department_t &);
+  bool operator!=(const department_t &);
 };
+
 class Department
 {
 private:
-  node<department_t> *primero;
-  node<department_t> *ultimo;
+  ListADT<department_t> *departamentos;
   sizeT totalDpto;
 
 public:
   Department();
   ~Department();
-  node<department_t> *find(id_dpto);
-  sizeT TotalWorkers;
   void pushDpto(id_dpto, string);
   void deleteDpto(id_dpto);
   sizeT getNumWorkers(id_dpto);
-  sizeT getTotalWokers();
+  sizeT getTotalWorkers();
+  sizeT getTotalDpto();
   void DisplayWorkers(id_dpto);
   void DisplayDptos();
+  node<department_t> *find(id_dpto);
 };
 
 #endif
