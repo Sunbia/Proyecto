@@ -150,7 +150,7 @@ Workers::~Workers() // O(1)*O(n) = O(n)
 void Workers::insertWorker(worker_t worker_p)
 {
   rut_t index = hash(worker_p.RUT.digitos);
-  trabajadores[index] = new LinkedList<worker_t>();
+  trabajadores[index] = new LinkedList<worker_t>(); //TODO: Segmentation Fault
   trabajadores[index]->addAfterTail(worker_p);
   numWorkers++;
 }
