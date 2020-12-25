@@ -1,11 +1,10 @@
 #ifndef DATATYPES_HPP
 #define DATATYPES_HPP
-#include "List/LinkedList.hpp"
+#include "List\LinkedList.hpp"
+#include "HashTable\OpenHashTable.hpp"
 #include <string>
 #include <iostream>
 using std::string;
-
-#define MAX 10 // tamaño de la tabla
 typedef unsigned int sizeT;
 typedef unsigned int id_dpto; // key
 typedef unsigned int salario_t;
@@ -47,10 +46,8 @@ class Workers
 {
 
 private:
-  ListADT<worker_t> *trabajadores[MAX];
+  HashTable<rut_t, worker_t> *trabajadores;
   sizeT numWorkers;
-  sizeT maxLength;
-  rut_t hash(rut_t);
 
 public:
   Workers();
@@ -90,7 +87,7 @@ public:
   sizeT getTotalDpto();
   void DisplayWorkers(id_dpto);
   void DisplayDptos();
-  node<department_t> *find(id_dpto);
+  department_t getDpto(id_dpto);
 };
 
 #endif

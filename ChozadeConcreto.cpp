@@ -21,6 +21,7 @@ int main(int argc, char const *argv[])
     cout << "1. Agregar Departamento" << endl;
     cout << "2. Eliminar Departamento" << endl;
     cout << "3. Mostrar Departamentos" << endl;
+    cout << "4. Salir" << endl;
     cout << "Total Trabajadores: " << chozadeconcreto->getTotalWorkers() << endl;
     cout << "Total Departamentos: " << chozadeconcreto->getTotalDpto() << endl;
     cout << "Seleccione una opcion:";
@@ -55,10 +56,10 @@ int main(int argc, char const *argv[])
         cout << "En que departamento desea ingresar ?(ID): ";
         cin >> key_dpto;
         cin >> trabajador;
-        chozadeconcreto->find(key_dpto)->data.Trabajadores->insertWorker(trabajador);
+        chozadeconcreto->getDpto(key_dpto).Trabajadores->insertWorker(trabajador);
         break;
       case 2:
-        chozadeconcreto->find(key_dpto)->data.Trabajadores->deleteWorker(key_worker);
+        chozadeconcreto->getDpto(key_dpto).Trabajadores->deleteWorker(key_worker);
         cout << "Despedido con exito!" << endl;
         break;
       case 3:
@@ -67,13 +68,17 @@ int main(int argc, char const *argv[])
         cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
         cin >> key_worker;
         cin >> trabajador;
-        chozadeconcreto->find(key_dpto)->data.Trabajadores->modifyWorker(key_worker, trabajador);
+        chozadeconcreto->getDpto(key_dpto).Trabajadores->modifyWorker(key_worker, trabajador);
         break;
       case 4:
         chozadeconcreto->DisplayWorkers(key_dpto);
         break;
       case 5:
-        chozadeconcreto->find(key_dpto)->data.Trabajadores->genLiq(key_worker);
+        cout << "ingrese identificador de departamento:";
+        cin >> key_dpto;
+        cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
+        cin >> key_worker;
+        chozadeconcreto->getDpto(key_dpto).Trabajadores->genLiq(key_worker);
         break;
       case 6:
         continue;
@@ -86,7 +91,7 @@ int main(int argc, char const *argv[])
     default:
       break;
     }
-  } while (expression <= 1 || expression > 5);
+  } while (expression <= 1 || expression > 5 || expression2 <= 1 || expression2 > 3);
 
   return 0;
 }

@@ -111,12 +111,6 @@ bool department_t::operator!=(const department_t &ref)
 // ─── TRABAJADORES ───────────────────────────────────────────────────────────────
 //
 
-rut_t Workers::hash(rut_t key)
-{
-  return key % maxLength;
-}
-// ────────────────────────────────────────────────────────────────────────────────
-
 sizeT Workers::getNumWorkers()
 {
   return numWorkers;
@@ -126,122 +120,60 @@ sizeT Workers::getNumWorkers()
 
 Workers::Workers()
 {
-  for (int i = 0; i < MAX; i++)
-  {
-    trabajadores[i] = NULL;
-  }
-  maxLength = MAX;
+  trabajadores = new OpenHashTable<rut_t, worker_t>;
   numWorkers = 0;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 Workers::~Workers() // O(1)*O(n) = O(n)
 {
-  for (sizeT i = 0; i < maxLength; i++) //O(1)
-  {
-    while (trabajadores[i]->empty() != false)
-    {
-      trabajadores[i]->removeTail(); //O(n)
-    }
-  }
+  delete trabajadores;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::insertWorker(worker_t worker_p)
 {
-  rut_t index = hash(worker_p.RUT.digitos);
-  trabajadores[index] = new LinkedList<worker_t>(); //TODO: Segmentation Fault
-  trabajadores[index]->addAfterTail(worker_p);
+  trabajadores->insert(worker_p.RUT.digitos, worker_p);
   numWorkers++;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 worker_t Workers::getWorker(rut_t rut_p)
 {
-  rut_t index = hash(rut_p);
-  worker_t finded;
-  for (index_t i = 0; i < trabajadores[index]->getsize(); i++)
-  {
-    node<worker_t> *aux = trabajadores[index]->find(i);
-    if (aux->data.RUT.digitos == rut_p)
-    {
-      finded = aux->data;
-    }
-  }
-  return finded;
+  return trabajadores->find(rut_p);
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::deleteWorker(rut_t rut_p)
 {
-  rut_t index = hash(rut_p);
-  node<worker_t> *aux = trabajadores[index]->getHead();
-  while (aux != NULL)
-  {
-    if (aux->data.RUT.digitos == rut_p)
-    {
-      trabajadores[index]->remove(aux->data);
-      numWorkers--;
-      break;
-    }
-    else
-    {
-      aux = aux->next;
-    }
-  }
+  trabajadores->remove(rut_p);
+  numWorkers--;
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::modifyWorker(rut_t rut_p, worker_t worker_p)
 {
-  rut_t index = hash(rut_p);
-  for (node<worker_t> *i = trabajadores[index]->getHead(); i != NULL; i = i->next)
-  {
-    if (i->data.RUT.digitos == rut_p)
-    {
-      i->data = worker_p;
-      break;
-    }
-  }
+  trabajadores->find(rut_p) = worker_p;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::displayTable()
 {
-
-  for (sizeT i = 0; i < maxLength; i++)
-  {
-    node<worker_t> *aux = trabajadores[i]->getHead();
-    while (aux != NULL && trabajadores[i]->empty() != false)
-    {
-      cout << "=========================== Trabajador " << i + 1 << endl;
-      cout << aux->data;
-      cout << "===========================" << endl;
-      aux = aux->next;
-    }
-  }
+  trabajadores->display();
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::genLiq(rut_t id)
 {
-  int i = hash(id);
-  node<worker_t> *aux = trabajadores[i]->getHead();
-  while (aux != NULL)
-  {
-    if (aux->data.RUT.digitos == id)
-    {
-      aux->data.cargas;   // variables
-      aux->data.contrato; // variables
-      aux->data.salario;  // variables
-    }
-    else
-    {
-      aux = aux->next;
-    }
-  }
+  trabajadores->find(id).nombre;
+  trabajadores->find(id).apellidoP;
+  trabajadores->find(id).apellidoM;
+  trabajadores->find(id).RUT;
+  trabajadores->find(id).nacimiento;
+  trabajadores->find(id).contrato;
+  trabajadores->find(id).cargas;
 }
 
 //
@@ -257,11 +189,12 @@ Department::Department()
 
 Department::~Department()
 {
-  while (totalDpto > 0)
-  {
-    departamentos->removeTail();
-    totalDpto--;
-  }
+  // while (totalDpto > 0)
+  // {
+  //   departamentos->removeTail();
+  //   totalDpto--;
+  // }
+  delete departamentos;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -278,23 +211,15 @@ void Department::pushDpto(id_dpto id, string name)
 
 void Department::deleteDpto(id_dpto idpto)
 {
-  for (index_t i = 0; i < departamentos->getsize(); i++)
-  {
-    node<department_t> *aux = departamentos->find(i);
-    if (aux->data.numero == idpto)
-    {
-      departamentos->remove(aux->data);
-      totalDpto--;
-      break;
-    }
-  }
+  department_t target = getDpto(idpto);
+  departamentos->remove(target);
 }
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 sizeT Department::getNumWorkers(id_dpto idpto)
 {
-  node<department_t> *aux = find(idpto);
-  return aux->data.Trabajadores->getNumWorkers();
+  return getDpto(idpto).Trabajadores->getNumWorkers();
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -303,9 +228,9 @@ sizeT Department::getTotalWorkers()
   sizeT suma = 0;
   for (index_t i = 0; i < departamentos->getsize(); i++)
   {
-    node<department_t> *aux = departamentos->find(i);
-    suma += aux->data.Trabajadores->getNumWorkers();
+    suma += departamentos->get(i).Trabajadores->getNumWorkers();
   }
+  return suma;
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -315,24 +240,23 @@ sizeT Department::getTotalDpto()
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-node<department_t> *Department::find(id_dpto idpto)
+department_t Department::getDpto(id_dpto idpto)
 {
-  node<department_t> *finded;
-  for (index_t i = 0; i < departamentos->getsize(); i++)
+  department_t target;
+  for (size_t i = 0; i < departamentos->getsize(); i++)
   {
-    node<department_t> *aux = departamentos->find(i);
-    if (aux->data.numero == idpto)
+    target = departamentos->get(i);
+    if (target.numero == idpto)
     {
-      finded = aux;
+      return target;
     }
   }
-  return finded;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Department::DisplayWorkers(id_dpto dpto)
 {
-  find(dpto)->data.Trabajadores->displayTable();
+  getDpto(dpto).Trabajadores->displayTable();
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
