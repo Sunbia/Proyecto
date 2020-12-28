@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "ListADT.hpp"
-
+#include <string>
 template <class T>
 class LinkedList : public ListADT<T>
 {
@@ -215,7 +215,7 @@ void LinkedList<T>::add(T element, index_t index)
     }
     else
     {
-        node<T> *target = find(index);
+        node<T> *target = get(index);
         node<T> *newNode = new node<T>();
         newNode->next = target;
         newNode->prev = target->prev;

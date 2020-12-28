@@ -9,12 +9,14 @@ using std::endl;
 
 std::ostream &operator<<(std::ostream &output, const worker_t &worker)
 {
-  output << worker.RUT.digitos << '-' << worker.RUT.verificador << endl;
-  output << worker.nacimiento.day << '/' << worker.nacimiento.month << '/' << worker.nacimiento.year << endl;
-  output << worker.nombre << ' ' << worker.apellidoP << ' ' << worker.apellidoM << endl;
-  output << worker.contrato << endl;
-  output << worker.salario << endl;
-  output << worker.cargas << endl;
+  output << "========================================================" << endl;
+  output << "Nombre:" << worker.nombre << ' ' << worker.apellidoP << ' ' << worker.apellidoM << endl;
+  output << "Rut:" << worker.RUT.digitos << '-' << worker.RUT.verificador << endl;
+  output << "Fecha de nacimiento:" << worker.nacimiento.day << '/' << worker.nacimiento.month << '/' << worker.nacimiento.year << endl;
+  output << "Tipo de contrato:" << worker.contrato << endl;
+  output << "Salario por hora:" << worker.salario << endl;
+  output << "Numero de cargas:" << worker.cargas << endl;
+  output << "========================================================" << endl;
   return output;
 }
 std::istream &operator>>(std::istream &in, worker_t &trabajador)
@@ -77,7 +79,7 @@ std::istream &operator>>(std::istream &in, worker_t &trabajador)
       cout << "Ingrese una opcion correcta";
       break;
     }
-  } while (expression <= 0 || expression > 5);
+  } while (expression >= 1 && expression <= 5);
   cout << endl
        << "Salario:";
   in >> trabajador.salario;
@@ -167,13 +169,36 @@ void Workers::displayTable()
 
 void Workers::genLiq(rut_t id)
 {
-  trabajadores->find(id).nombre;
-  trabajadores->find(id).apellidoP;
-  trabajadores->find(id).apellidoM;
-  trabajadores->find(id).RUT;
-  trabajadores->find(id).nacimiento;
-  trabajadores->find(id).contrato;
-  trabajadores->find(id).cargas;
+  salario_t porDia = trabajadores->find(id).salario * 8;
+  salario_t porSemana = porDia * 40;
+  salario_t porMes = porSemana * 4;
+  salario_t descuentosDia = (7 / 100) * porDia + porDia * (1 / 10);
+  salario_t beneficiosDia = (porDia / 4) + 1500;
+  salario_t descuentosSemana = descuentosDia * 5;
+  salario_t beneficiosSemana = beneficiosDia * 5;
+  salario_t descuentosMes = descuentosSemana * 4;
+  salario_t beneficiosMes = descuentosSemana * 4;
+  if (trabajadores->find(id).contrato == "Fijo")
+  {
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
+  }
+  else if (trabajadores->find(id).contrato == "Indefinido")
+  {
+    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia;
+    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana;
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
+  }
+  else if (trabajadores->find(id).contrato == "Faena")
+  {
+  }
+  else if (trabajadores->find(id).contrato == "Dia")
+  {
+    cout << "Salario por dia" << porDia - descuentosDia + beneficiosDia;
+  }
+  else if (trabajadores->find(id).contrato == "Honorarios")
+  {
+    /*code*/
+  }
 }
 
 //
@@ -213,6 +238,7 @@ void Department::deleteDpto(id_dpto idpto)
 {
   department_t target = getDpto(idpto);
   departamentos->remove(target);
+  totalDpto--;
 }
 
 // ────────────────────────────────────────────────────────────────────────────────

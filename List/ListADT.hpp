@@ -33,4 +33,5 @@ public:
     virtual node<T> *getTail() = 0;
     virtual node<T> *getHead() = 0;
 };
+
 #endif

@@ -41,57 +41,63 @@ int main(int argc, char const *argv[])
       chozadeconcreto->deleteDpto(key_dpto);
       break;
     case 3:
-      chozadeconcreto->DisplayDptos();
-      cout << "1.Agregar trabajador" << endl;
-      cout << "2.Eliminar trabajador" << endl;
-      cout << "3.Modificar trabajador" << endl;
-      cout << "4.Mostrar trabajadores de un departamento" << endl;
-      cout << "5.Generar liquidacion de sueldo" << endl;
-      cout << "6.Volver al menu" << endl;
-      cout << "Seleccione una opcion:";
-      cin >> expression2;
-      switch (expression2)
+    {
+      do
       {
-      case 1:
-        cout << "En que departamento desea ingresar ?(ID): ";
-        cin >> key_dpto;
-        cin >> trabajador;
-        chozadeconcreto->getDpto(key_dpto).Trabajadores->insertWorker(trabajador);
+        chozadeconcreto->DisplayDptos();
+        cout << "1.Agregar trabajador" << endl;
+        cout << "2.Eliminar trabajador" << endl;
+        cout << "3.Modificar trabajador" << endl;
+        cout << "4.Mostrar trabajadores de un departamento" << endl;
+        cout << "5.Generar liquidacion de sueldo" << endl;
+        cout << "6.Volver al menu" << endl;
+        cout << "Seleccione una opcion:";
+        cin >> expression2;
+        switch (expression2)
+        {
+        case 1:
+          cout << "En que departamento desea ingresar ?(ID): ";
+          cin >> key_dpto;
+          cin >> trabajador;
+          chozadeconcreto->getDpto(key_dpto).Trabajadores->insertWorker(trabajador);
+          break;
+        case 2:
+          chozadeconcreto->getDpto(key_dpto).Trabajadores->deleteWorker(key_worker);
+          cout << "Despedido con exito!" << endl;
+          break;
+        case 3:
+          cout << "ingrese identificador de departamento:";
+          cin >> key_dpto;
+          cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
+          cin >> key_worker;
+          cin >> trabajador;
+          chozadeconcreto->getDpto(key_dpto).Trabajadores->modifyWorker(key_worker, trabajador);
+          break;
+        case 4:
+          chozadeconcreto->DisplayWorkers(key_dpto);
+          break;
+        case 5:
+          cout << "ingrese identificador de departamento:";
+          cin >> key_dpto;
+          cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
+          cin >> key_worker;
+          chozadeconcreto->getDpto(key_dpto).Trabajadores->genLiq(key_worker);
+          break;
+        case 6:
+          break;
+        default:
+          break;
+        }
         break;
-      case 2:
-        chozadeconcreto->getDpto(key_dpto).Trabajadores->deleteWorker(key_worker);
-        cout << "Despedido con exito!" << endl;
-        break;
-      case 3:
-        cout << "ingrese identificador de departamento:";
-        cin >> key_dpto;
-        cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
-        cin >> key_worker;
-        cin >> trabajador;
-        chozadeconcreto->getDpto(key_dpto).Trabajadores->modifyWorker(key_worker, trabajador);
-        break;
-      case 4:
-        chozadeconcreto->DisplayWorkers(key_dpto);
-        break;
-      case 5:
-        cout << "ingrese identificador de departamento:";
-        cin >> key_dpto;
-        cout << "Numero inicial del rut del trabajador (12.345.678 sin puntos): ";
-        cin >> key_worker;
-        chozadeconcreto->getDpto(key_dpto).Trabajadores->genLiq(key_worker);
-        break;
-      case 6:
-        continue;
-      default:
-        break;
-      }
-      break;
+      } while (expression2 >= 1 && expression2 <= 5);
+    }
+
     case 4:
       break;
     default:
       break;
     }
-  } while (expression <= 1 || expression > 5 || expression2 <= 1 || expression2 > 3);
+  } while (expression >= 1 && expression <= 3);
 
   return 0;
 }
