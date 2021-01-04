@@ -3,7 +3,7 @@
 // ────────────────────────────────────────────────────────────────────────────────
 
 #include "HashTable.hpp"
-#include "..\List\LinkedList.hpp"
+#include "..\List\DLinkedList.hpp"
 #include <cstdlib>
 #include <iostream>
 #define defaultMAX 10
@@ -31,6 +31,7 @@ public:
     void insert(Key, Value);
     void remove(Key);
     void display();
+    bool contains(Key);
 };
 
 template <typename Key, typename Value>
@@ -83,35 +84,16 @@ template <typename Key, typename Value>
 Value OpenHashTable<Key, Value>::find(Key key)
 {
     int index = hash(key);
-    try
+    Value returnvalue;
+    for (size_t i = 0; i < this->table[index]->getsize(); i++)
     {
-        if (table[index] == nullptr)
+        if (table[index]->get(i).key == key)
         {
-            throw "La lista esta vacia";
-        }
-        else
-        {
-            for (size_t i = 0; i < this->table[index]->getsize(); i++)
-            {
-                if (table[index]->get(i).key == key)
-                {
-                    return table[index]->get(i).value;
-                }
-                else
-                {
-                    throw "No encontrado";
-                }
-            }
+            returnvalue = table[index]->get(i).value;
+            break;
         }
     }
-    catch (const char *emptylist)
-    {
-        cout << emptylist << endl;
-    }
-    catch (const char *notfinded)
-    {
-        cout << notfinded << endl;
-    }
+    return returnvalue;
 }
 
 template <typename Key, typename Value>
@@ -120,7 +102,7 @@ void OpenHashTable<Key, Value>::insert(Key key, Value value)
     int index = hash(key);
     if (table[index] == nullptr)
     {
-        table[index] = new LinkedList<Bucket<Key, Value>>();
+        table[index] = new DLinkedList<Bucket<Key, Value>>();
         Bucket<Key, Value> newdata;
         newdata.key = key;
         newdata.value = value;
@@ -153,27 +135,36 @@ void OpenHashTable<Key, Value>::remove(Key key)
 template <typename Key, typename Value>
 void OpenHashTable<Key, Value>::display()
 {
+    
     for (size_t i = 0; i < maxLength; i++)
     {
         size_t j = 0;
-        if (table[i] != nullptr)
+        while (table[i]->empty() == false && j < table[i]->getsize())
         {
-            while (j < table[i]->getsize())
-            {
-                if (j == table[i]->getsize() - 1)
-                {
-                    cout << table[i]->get(j);
-                    j++;
-                }
-                else
-                {
-                    cout << table[i]->get(j) << "-->";
-                    j++;
-                }
-            }
-            cout << endl;
+            cout << table[i]->get(j) << endl;
+            j++;
+        }
+        cout << endl;
+    }
+}
+template <typename Key, typename Value>
+bool OpenHashTable<Key, Value>::contains(Key key)
+{
+    int index = hash(key);
+    if (table[index] == nullptr)
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < this->table[index]->getsize(); i++)
+    {
+        if (table[index]->get(i).key == key)
+        {
+            return true;
         }
     }
+
+    return false;
 }
 
 #endif

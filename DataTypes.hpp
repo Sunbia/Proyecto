@@ -1,6 +1,6 @@
 #ifndef DATATYPES_HPP
 #define DATATYPES_HPP
-#include "List\LinkedList.hpp"
+#include "List\DLinkedList.hpp"
 #include "HashTable\OpenHashTable.hpp"
 #include <string>
 #include <iostream>
@@ -10,32 +10,33 @@ typedef unsigned int id_dpto; // key
 typedef unsigned int salario_t;
 typedef unsigned int carga_t;
 typedef unsigned int rut_t; // key
+// ────────────────────────────────────────────────────────────────────────────────
 
 struct rut
 {
   rut_t digitos;
   char verificador;
-  bool isCorrect();
 };
 
 struct fecha
 {
-  unsigned int day;   //   0 < day < 32
-  unsigned int month; //  0 < month < 13
-  unsigned int year;  // 1900 < month < 9999 (?)
-  bool isSafe();
+  unsigned int day;
+  unsigned int month;
+  unsigned int year;
 };
+// ────────────────────────────────────────────────────────────────────────────────
 
 struct worker_t
 {
-  rut RUT; //  rut.digitos = key
+  rut RUT;
   fecha nacimiento;
-  string nombre;    // < 51
-  string apellidoP; // < 51
-  string apellidoM; // < 51
+  string nombre;
+  string apellidoP;
+  string apellidoM;
   string contrato;
   salario_t salario;
   carga_t cargas;
+  bool verify();
   friend std::ostream &operator<<(std::ostream &, const worker_t &);
   friend std::istream &operator>>(std::istream &, worker_t &);
   bool operator==(const worker_t &);
@@ -52,14 +53,17 @@ private:
 public:
   Workers();
   ~Workers();
+  bool isEmpty();
+  bool contains(rut_t);
   sizeT getNumWorkers();
   void insertWorker(worker_t);
   worker_t getWorker(rut_t);
   void deleteWorker(rut_t);
   void modifyWorker(rut_t, worker_t);
-  void displayTable();
+  void displayWorkers();
   void genLiq(rut_t);
 };
+// ────────────────────────────────────────────────────────────────────────────────
 
 struct department_t
 {
@@ -80,6 +84,8 @@ private:
 public:
   Department();
   ~Department();
+  bool isEmpty();
+  bool contains(id_dpto);
   void pushDpto(id_dpto, string);
   void deleteDpto(id_dpto);
   sizeT getNumWorkers(id_dpto);

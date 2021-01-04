@@ -33,5 +33,6 @@ public:
     virtual void insert(Key, Value) = 0;
     virtual void remove(Key) = 0;
     virtual void display() = 0;
+    virtual bool contains(Key) = 0;
 };
 #endif

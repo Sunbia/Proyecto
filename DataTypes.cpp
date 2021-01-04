@@ -1,51 +1,64 @@
 #include "DataTypes.hpp"
 #include <iostream>
+using std::cin;
 using std::cout;
 using std::endl;
 
 //
 // ─── WORKER_T ───────────────────────────────────────────────────────────────────
 //
+bool worker_t::verify()
+{
+  return RUT.digitos > 99999999 && (RUT.verificador != 'k' || RUT.verificador <= '0' || RUT.verificador >= '9') && (nacimiento.day < 1 || nacimiento.day > 31) && (nacimiento.month < 1 || nacimiento.month > 12) && (nacimiento.year < 1900 || nacimiento.year > 2003) && nombre.length() > 50 && apellidoP.length() > 25 && apellidoM.length() > 25;
+}
 
 std::ostream &operator<<(std::ostream &output, const worker_t &worker)
 {
-  output << "========================================================" << endl;
   output << "Nombre:" << worker.nombre << ' ' << worker.apellidoP << ' ' << worker.apellidoM << endl;
   output << "Rut:" << worker.RUT.digitos << '-' << worker.RUT.verificador << endl;
   output << "Fecha de nacimiento:" << worker.nacimiento.day << '/' << worker.nacimiento.month << '/' << worker.nacimiento.year << endl;
   output << "Tipo de contrato:" << worker.contrato << endl;
   output << "Salario por hora:" << worker.salario << endl;
   output << "Numero de cargas:" << worker.cargas << endl;
-  output << "========================================================" << endl;
   return output;
 }
 std::istream &operator>>(std::istream &in, worker_t &trabajador)
 {
   cout << "-- Rut --" << endl;
+
   cout << "Numero inicial (12.345.678 sin puntos):";
   in >> trabajador.RUT.digitos;
-  cout << endl
-       << "Digito verificador:";
+  cout << endl;
+
+  cout << "Digito verificador:";
   in >> trabajador.RUT.verificador;
-  cout << endl
-       << "-- Fecha de nacimiento --" << endl;
+  cout << endl;
+
+  cout << "-- Fecha de nacimiento --" << endl;
+
   cout << "Day:";
   in >> trabajador.nacimiento.day;
-  cout << endl
-       << "Month:";
+  cout << endl;
+
+  cout << "Month:";
   in >> trabajador.nacimiento.month;
-  cout << endl
-       << "Year:";
-  in >> trabajador.nacimiento.year;
+  cout << endl;
+
+  cout << "Year:";
+  in >> trabajador.nacimiento.month;
+
   cout << endl
        << "Nombre:";
   in >> trabajador.nombre;
+
   cout << endl
        << "Apellido Paterno:";
   in >> trabajador.apellidoP;
+
   cout << endl
-       << "Apellido Materno:";
+       << "Apellido Paterno:";
   in >> trabajador.apellidoM;
+
   cout << endl
        << "Tipo contrato:" << endl;
   int expression;
@@ -76,10 +89,10 @@ std::istream &operator>>(std::istream &in, worker_t &trabajador)
       trabajador.contrato = "Honorarios";
       break;
     default:
-      cout << "Ingrese una opcion correcta";
+      cout << "Ingrese una opcion correcta" << endl;
       break;
     }
-  } while (expression >= 1 && expression <= 5);
+  } while (expression < 1 || expression > 5);
   cout << endl
        << "Salario:";
   in >> trabajador.salario;
@@ -104,6 +117,7 @@ bool department_t::operator==(const department_t &ref)
 {
   return numero == ref.numero && nombre == ref.nombre;
 }
+
 bool department_t::operator!=(const department_t &ref)
 {
   return numero != ref.numero && nombre != ref.nombre;
@@ -132,6 +146,16 @@ Workers::~Workers() // O(1)*O(n) = O(n)
   delete trabajadores;
 }
 // ────────────────────────────────────────────────────────────────────────────────
+bool Workers::isEmpty()
+{
+  return !numWorkers;
+}
+// ────────────────────────────────────────────────────────────────────────────────
+bool Workers::contains(rut_t rut_p)
+{
+  return trabajadores->contains(rut_p);
+}
+// ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::insertWorker(worker_t worker_p)
 {
@@ -149,21 +173,48 @@ worker_t Workers::getWorker(rut_t rut_p)
 
 void Workers::deleteWorker(rut_t rut_p)
 {
-  trabajadores->remove(rut_p);
-  numWorkers--;
+  if (this->isEmpty())
+  {
+    cout << "La lista de trabajadores esta vacia" << endl;
+  }
+  else if (!contains(rut_p))
+  {
+    cout << "El trabajador no se encuentra en la lista" << endl;
+  }
+  else
+  {
+    trabajadores->remove(rut_p);
+    numWorkers--;
+    cout << trabajadores->find(rut_p).nombre << "ha sido removido de la lista" << endl;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Workers::modifyWorker(rut_t rut_p, worker_t worker_p)
 {
-  trabajadores->find(rut_p) = worker_p;
+  if (trabajadores->empty())
+  {
+    cout << "La lista de trabajadores esta vacia" << endl;
+  }
+  else if (!trabajadores->contains(rut_p))
+  {
+    cout << "El trabajador no se encuentra en la lista" << endl;
+  }
+  else
+  {
+    trabajadores->find(rut_p) = worker_p;
+    cout << "Los datos de " << trabajadores->find(rut_p).nombre << "han sido modificados" << endl;
+  }
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
-void Workers::displayTable()
+void Workers::displayWorkers()
 {
-  trabajadores->display();
+  if (!trabajadores->empty())
+  {
+    trabajadores->display();
+  }
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -190,6 +241,10 @@ void Workers::genLiq(rut_t id)
   }
   else if (trabajadores->find(id).contrato == "Faena")
   {
+    cout << "Salario por Hora" << porDia / 8 - descuentosDia / 8 + beneficiosDia / 8;
+    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia;
+    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana;
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
   }
   else if (trabajadores->find(id).contrato == "Dia")
   {
@@ -197,7 +252,34 @@ void Workers::genLiq(rut_t id)
   }
   else if (trabajadores->find(id).contrato == "Honorarios")
   {
-    /*code*/
+    int expression;
+    int cantidad;
+    do
+    {
+      cout << "Ingrese el tiempo que el trabajador va prestar su servicio";
+      cin >> expression;
+      cout << "1.Horas" << endl;
+      cout << "2.Dias" << endl;
+      cout << "3.Semanas" << endl;
+      switch (expression)
+      {
+      case 1:
+        cout << "Ingrese la cantidad de horas:";
+        cin >> cantidad;
+        cout << "Salario por " << cantidad << " horas" << porDia / 8 * cantidad;
+        break;
+      case 2:
+        cout << "Ingrese la cantidad de dias:";
+        cin >> cantidad;
+        cout << "Salario por " << cantidad << "dias" << porDia * cantidad;
+      case 3:
+        cout << "Ingrese la cantidad de semanas:";
+        cin >> cantidad;
+        cout << "Salario por " << cantidad << "semanas" << porSemana * cantidad;
+      default:
+        break;
+      }
+    } while (expression >= 1 && expression <= 3);
   }
 }
 
@@ -207,7 +289,7 @@ void Workers::genLiq(rut_t id)
 
 Department::Department()
 {
-  departamentos = new LinkedList<department_t>;
+  departamentos = new DLinkedList<department_t>;
   totalDpto = 0;
 }
 // ────────────────────────────────────────────────────────────────────────────────
@@ -220,6 +302,24 @@ Department::~Department()
   //   totalDpto--;
   // }
   delete departamentos;
+}
+// ────────────────────────────────────────────────────────────────────────────────
+bool Department::isEmpty()
+{
+  return totalDpto == 0;
+  // return departamentos->empty();
+}
+// ────────────────────────────────────────────────────────────────────────────────
+bool Department::contains(id_dpto idpto)
+{
+  for (size_t i = 0; i < departamentos->getsize(); i++)
+  {
+    if (departamentos->get(i).numero == idpto)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -237,8 +337,19 @@ void Department::pushDpto(id_dpto id, string name)
 void Department::deleteDpto(id_dpto idpto)
 {
   department_t target = getDpto(idpto);
-  departamentos->remove(target);
-  totalDpto--;
+  if (isEmpty())
+  {
+    cout << "No se han agregado departamentos" << endl;
+  }
+  else if (departamentos->contains(target) == false)
+  {
+    cout << "No se encontro el departamento" << endl;
+  }
+  else
+  {
+    departamentos->remove(target);
+    totalDpto--;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -274,15 +385,16 @@ department_t Department::getDpto(id_dpto idpto)
     target = departamentos->get(i);
     if (target.numero == idpto)
     {
-      return target;
+      break;
     }
   }
+  return target;
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
 void Department::DisplayWorkers(id_dpto dpto)
 {
-  getDpto(dpto).Trabajadores->displayTable();
+  getDpto(dpto).Trabajadores->displayWorkers();
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -291,8 +403,9 @@ void Department::DisplayDptos()
   cout << "================ Departamentos ================" << endl;
   for (index_t i = 0; i < departamentos->getsize(); i++)
   {
-    cout << departamentos->get(i).nombre << endl;
-    cout << departamentos->get(i).numero << endl;
-    cout << "===============================================" << endl;
+    cout <<"Nombre:"<< departamentos->get(i).nombre << endl;
+    cout <<"Numero identificador:" << departamentos->get(i).numero << endl;
+    cout <<"Total de Trabajadores:" << departamentos->get(i).Trabajadores->getNumWorkers() << endl;
+    cout <<"===============================================" << endl;
   }
 }
