@@ -9,17 +9,26 @@ using std::endl;
 //
 bool worker_t::verify()
 {
-  return RUT.digitos > 99999999 && (RUT.verificador != 'k' || RUT.verificador <= '0' || RUT.verificador >= '9') && (nacimiento.day < 1 || nacimiento.day > 31) && (nacimiento.month < 1 || nacimiento.month > 12) && (nacimiento.year < 1900 || nacimiento.year > 2003) && nombre.length() > 50 && apellidoP.length() > 25 && apellidoM.length() > 25;
+  return RUT.digitos < 100000000
+  && (RUT.verificador >= '0' || RUT.verificador <= '9' || RUT.verificador == 'k') 
+  && (nacimiento.day >= 1 || nacimiento.day <= 31) 
+  && (nacimiento.month >= 1 || nacimiento.month <= 12) 
+  && (nacimiento.year >= 1900 || nacimiento.year <= 9999) 
+  && nombre.length() <= 50 
+  && apellidoP.length() <= 25 
+  && apellidoM.length() <= 25;
 }
 
 std::ostream &operator<<(std::ostream &output, const worker_t &worker)
 {
+  output << "================================" << endl;
   output << "Nombre:" << worker.nombre << ' ' << worker.apellidoP << ' ' << worker.apellidoM << endl;
   output << "Rut:" << worker.RUT.digitos << '-' << worker.RUT.verificador << endl;
   output << "Fecha de nacimiento:" << worker.nacimiento.day << '/' << worker.nacimiento.month << '/' << worker.nacimiento.year << endl;
   output << "Tipo de contrato:" << worker.contrato << endl;
   output << "Salario por hora:" << worker.salario << endl;
   output << "Numero de cargas:" << worker.cargas << endl;
+  output << "================================" << endl;
   return output;
 }
 std::istream &operator>>(std::istream &in, worker_t &trabajador)
@@ -35,7 +44,6 @@ std::istream &operator>>(std::istream &in, worker_t &trabajador)
   cout << endl;
 
   cout << "-- Fecha de nacimiento --" << endl;
-
   cout << "Day:";
   in >> trabajador.nacimiento.day;
   cout << endl;
@@ -45,7 +53,7 @@ std::istream &operator>>(std::istream &in, worker_t &trabajador)
   cout << endl;
 
   cout << "Year:";
-  in >> trabajador.nacimiento.month;
+  in >> trabajador.nacimiento.year;
 
   cout << endl
        << "Nombre:";
@@ -220,7 +228,8 @@ void Workers::displayWorkers()
 
 void Workers::genLiq(rut_t id)
 {
-  salario_t porDia = trabajadores->find(id).salario * 8;
+  worker_t usuario = trabajadores->find(id);
+  salario_t porDia = usuario.salario * 8;
   salario_t porSemana = porDia * 40;
   salario_t porMes = porSemana * 4;
   salario_t descuentosDia = (7 / 100) * porDia + porDia * (1 / 10);
@@ -229,28 +238,30 @@ void Workers::genLiq(rut_t id)
   salario_t beneficiosSemana = beneficiosDia * 5;
   salario_t descuentosMes = descuentosSemana * 4;
   salario_t beneficiosMes = descuentosSemana * 4;
-  if (trabajadores->find(id).contrato == "Fijo")
+  cout << usuario;
+  cout << "Liquidación sueldo: " << usuario.contrato << endl;
+  if (usuario.contrato == "Fijo")
   {
-    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes << endl;
   }
-  else if (trabajadores->find(id).contrato == "Indefinido")
+  else if (usuario.contrato == "Indefinido")
   {
-    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia;
-    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana;
-    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
+    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia << endl;
+    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana << endl;
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes << endl;
   }
-  else if (trabajadores->find(id).contrato == "Faena")
+  else if (usuario.contrato == "Faena")
   {
-    cout << "Salario por Hora" << porDia / 8 - descuentosDia / 8 + beneficiosDia / 8;
-    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia;
-    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana;
-    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes;
+    cout << "Salario por Hora" << porDia / 8 - descuentosDia / 8 + beneficiosDia / 8 << endl;
+    cout << "Salario Dia" << porDia - descuentosDia + beneficiosDia << endl;
+    cout << "Salario Semanal" << porSemana - descuentosSemana + beneficiosSemana << endl;
+    cout << "Salario Mensual:" << porMes - descuentosMes + beneficiosMes << endl;
   }
-  else if (trabajadores->find(id).contrato == "Dia")
+  else if (usuario.contrato == "Dia")
   {
-    cout << "Salario por dia" << porDia - descuentosDia + beneficiosDia;
+    cout << "Salario por dia" << porDia - descuentosDia + beneficiosDia << endl;
   }
-  else if (trabajadores->find(id).contrato == "Honorarios")
+  else if (usuario.contrato == "Honorarios")
   {
     int expression;
     int cantidad;
@@ -266,21 +277,22 @@ void Workers::genLiq(rut_t id)
       case 1:
         cout << "Ingrese la cantidad de horas:";
         cin >> cantidad;
-        cout << "Salario por " << cantidad << " horas" << porDia / 8 * cantidad;
+        cout << "Salario por " << cantidad << " horas" << porDia / 8 * cantidad << endl;
         break;
       case 2:
         cout << "Ingrese la cantidad de dias:";
         cin >> cantidad;
-        cout << "Salario por " << cantidad << "dias" << porDia * cantidad;
+        cout << "Salario por " << cantidad << "dias" << porDia * cantidad << endl;
       case 3:
         cout << "Ingrese la cantidad de semanas:";
         cin >> cantidad;
-        cout << "Salario por " << cantidad << "semanas" << porSemana * cantidad;
+        cout << "Salario por " << cantidad << "semanas" << porSemana * cantidad << endl;
       default:
         break;
       }
     } while (expression >= 1 && expression <= 3);
   }
+  cout << "==================" << endl;
 }
 
 //
@@ -403,9 +415,9 @@ void Department::DisplayDptos()
   cout << "================ Departamentos ================" << endl;
   for (index_t i = 0; i < departamentos->getsize(); i++)
   {
-    cout <<"Nombre:"<< departamentos->get(i).nombre << endl;
-    cout <<"Numero identificador:" << departamentos->get(i).numero << endl;
-    cout <<"Total de Trabajadores:" << departamentos->get(i).Trabajadores->getNumWorkers() << endl;
-    cout <<"===============================================" << endl;
+    cout << "Nombre:" << departamentos->get(i).nombre << endl;
+    cout << "Numero identificador:" << departamentos->get(i).numero << endl;
+    cout << "Total de Trabajadores:" << departamentos->get(i).Trabajadores->getNumWorkers() << endl;
+    cout << "===============================================" << endl;
   }
 }

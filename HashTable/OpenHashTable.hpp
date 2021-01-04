@@ -139,9 +139,9 @@ void OpenHashTable<Key, Value>::display()
     for (size_t i = 0; i < maxLength; i++)
     {
         size_t j = 0;
-        while (table[i]->empty() == false && j < table[i]->getsize())
+        while (table[i] != nullptr && j < table[i]->getsize())
         {
-            cout << table[i]->get(j) << endl;
+            cout << table[i]->get(j);
             j++;
         }
         cout << endl;

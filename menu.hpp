@@ -97,11 +97,11 @@ void menu()
           do
           {
             cin >> trabajador;
-            if (trabajador.verify())
+            if (!trabajador.verify())
             {
               cout << "Datos incorrectos" << endl;
             }
-          } while (trabajador.verify());
+          } while (!trabajador.verify());
 
           chozadeconcreto->getDpto(key_dpto).Trabajadores->insertWorker(trabajador);
           break;
@@ -143,11 +143,12 @@ void menu()
           do
           {
             cin >> trabajador;
-            if (trabajador.verify())
+            if (!trabajador.verify())
             {
               cout << "Datos incorrectos" << endl;
+              cin.ignore();
             }
-          } while (trabajador.verify());
+          } while (!trabajador.verify());
 
           chozadeconcreto->getDpto(key_dpto).Trabajadores->modifyWorker(key_worker, trabajador);
 
@@ -200,7 +201,9 @@ void menu()
         default:
           break;
         }
-        system(clear);
+        cin.ignore();
+          cin.get();
+      system(clear);
       } while (expression2 >= 1 && expression2 <= 5);
       break;
     }
@@ -209,7 +212,9 @@ void menu()
     default:
       break;
     }
-    system(clear);
+    cin.ignore();
+          cin.get();
+  system(clear);
   } while (expression >= 1 && expression <= 3);
 }
 
